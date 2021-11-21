@@ -112,7 +112,10 @@ class App extends Component {
 
   chooseImage = (cardId) => {
     cardId = cardId.toString()
-    if(this.state.cardsChosenId.includes(cardId)) {
+    if(this.state.cardsWon.includes(cardId)) {
+      return window.location.origin + '/images/white.png'
+    }
+    else if(this.state.cardsChosenId.includes(cardId)) {
       return CARD_ARRAY[cardId].img
     } else {
       return window.location.origin + '/images/blank.png'
@@ -126,6 +129,44 @@ class App extends Component {
       cardsChosen: [...this.state.cardsChosen, this.state.cardArray[cardId].name],
       cardsChosenId: [...this.state.cardsChosenId, cardId]
     })
+
+    if (alreadyChosen === 1) {
+      setTimeout(this.checkForMatch, 100)
+    }
+  }
+
+  //alert('Checking for match...')
+  checkForMatch = async () => {
+    const optionOneId = this.state.cardsChosenId[0]
+    const optionTwoId = this.state.cardsChosenId[1]
+
+    if(optionOneId === optionTwoId) {
+      alert('Você clicou na mesma imagem!')
+    }else if (this.state.cardsChosen[0] === this.state.cardsChosen[1]) {
+      alert('Boaaaa!!! :-D')
+
+      this.state.token.methods.mint(
+      this.state.account,
+      window.location.origin + CARD_ARRAY[optionOneId].img.toString()
+      )
+      .send({ from: this.state.account })
+      .on('transactionHash', (hash) => {
+        this.setState({
+          cardsWon: [...this.state.cardsWon, optionOneId, optionTwoId],
+          tokenURIs: [...this.state.tokenURIs, CARD_ARRAY[optionOneId].img]
+        })
+      })
+    } else {
+      alert('ops! :-( Tente novamente')
+    }
+    this.setState({
+      cardChosen: [],
+      cardsChosenId: []
+    })
+    if (this.state.cardsWon.legth === CARD_ARRAY.length) {
+      alert('Muitos parabéns')
+    }
+    
   }
 
   constructor(props) {
@@ -165,7 +206,7 @@ class App extends Component {
           <div className="row">
             <main role="main" className="col-lg-12 d-flex text-center">
               <div className="content mr-auto ml-auto">
-                <h1 className="d-4">Edit this file in App.js!</h1>
+                <h1 className="d-4">Start matching now</h1>
 
                 <div className="grid mb-4" >
 
@@ -189,11 +230,18 @@ class App extends Component {
 
                 <div>
 
-                  {/* Code goes here... */}
+                  <h5>Tokens Collected:<span id="result">&nbsp;{this.state.tokenURIs.length}</span></h5>
 
                   <div className="grid mb-4" >
 
-                    {/* Code goes here... */}
+                    { this.state.tokenURIs.map((tokenURI, key) => {
+                      return (
+                        <img
+                        key={key}
+                        src={tokenURI} 
+                        />
+                      )
+                    })}
 
                   </div>
 
