@@ -140,9 +140,9 @@ class App extends Component {
     const optionOneId = this.state.cardsChosenId[0]
     const optionTwoId = this.state.cardsChosenId[1]
 
-    if(optionOneId === optionTwoId) {
+    if(optionOneId == optionTwoId) {
       alert('Você clicou na mesma imagem!')
-    }else if (this.state.cardsChosen[0] === this.state.cardsChosen[1]) {
+    } else if (this.state.cardsChosen[0] === this.state.cardsChosen[1]) {
       alert('Boaaaa!!! :-D')
 
       this.state.token.methods.mint(
@@ -160,10 +160,10 @@ class App extends Component {
       alert('ops! :-( Tente novamente')
     }
     this.setState({
-      cardChosen: [],
+      cardsChosen: [],
       cardsChosenId: []
     })
-    if (this.state.cardsWon.legth === CARD_ARRAY.length) {
+    if (this.state.cardsWon.length === CARD_ARRAY.length) {
       alert('Muitos parabéns')
     }
     
